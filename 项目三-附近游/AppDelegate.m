@@ -7,6 +7,11 @@
 //
 
 #import "AppDelegate.h"
+#import "MyTabBarConntroller.h"
+#import "MMDrawerController.h"
+#import "MMExampleDrawerVisualStateManager.h"
+
+#import "LeftViewController.h"
 
 @interface AppDelegate ()
 
@@ -16,7 +21,38 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    
+    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    self.window.backgroundColor = [UIColor whiteColor];
+    [self.window makeKeyAndVisible];
+    
+    MyTabBarConntroller *mainVc = [[MyTabBarConntroller alloc] init];
+    LeftViewController *leftVc = [[LeftViewController alloc] init];
+    
+    MMDrawerController *mmDraw = [[MMDrawerController alloc] initWithCenterViewController:mainVc leftDrawerViewController:leftVc];
+    //设置宽度
+    [mmDraw setMaximumLeftDrawerWidth:125];
+    
+    //设置手势区域
+    [mmDraw setOpenDrawerGestureModeMask:MMOpenDrawerGestureModeAll];
+    [mmDraw setCloseDrawerGestureModeMask:MMCloseDrawerGestureModeAll];
+    
+    //设置动画类型
+    [[MMExampleDrawerVisualStateManager sharedManager] setLeftDrawerAnimationType:MMDrawerAnimationTypeParallax];
+    
+    //设置动画效果
+    [mmDraw setDrawerVisualStateBlock:^(MMDrawerController *drawerController, MMDrawerSide drawerSide, CGFloat percentVisible) {
+       
+        MMDrawerControllerDrawerVisualStateBlock block;
+        block = [[MMExampleDrawerVisualStateManager sharedManager] drawerVisualStateBlockForDrawerSide:drawerSide];
+        
+        if (block) {
+            block(drawerController,drawerSide,percentVisible);
+        }
+    }];
+    
+    self.window.rootViewController = mmDraw;
+    
     return YES;
 }
 
